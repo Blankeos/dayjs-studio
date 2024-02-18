@@ -1,4 +1,22 @@
-# SolidStart
+<h1>📅 Dayjs Studio</h1>
+
+A quick environment where you can play around with Dayjs Studio super easily!
+
+I'm currently using this to calculate date related stuff.
+
+Built with SolidJS and Monaco by [Carlo](https://github.com/blankeos) 💙.
+
+![preview](/preview-image.png)
+
+## Getting Started
+
+```bash
+bun install
+
+bun dev
+```
+
+<!-- # SolidStart
 
 Everything you need to build a Solid project, powered by [`solid-start`](https://start.solidjs.com);
 
@@ -27,4 +45,4 @@ npm run dev -- --open
 
 Solid apps are built with _adapters_, which optimise your project for deployment to different environments.
 
-By default, `npm run build` will generate a Node app that you can run with `npm start`. To use a different adapter, add it to the `devDependencies` in `package.json` and specify in your `vite.config.js`.
+By default, `npm run build` will generate a Node app that you can run with `npm start`. To use a different adapter, add it to the `devDependencies` in `package.json` and specify in your `vite.config.js`. -->
