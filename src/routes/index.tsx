@@ -3,12 +3,13 @@ import { MonacoEditor } from "solid-monaco";
 import { Panel, PanelGroup, ResizeHandle } from "solid-resizable-panels";
 
 import Counter from "@/components/Counter";
+import DAYJS_index from "@/constants/dayjs.txt?raw";
 
 import "solid-resizable-panels/styles.css";
 
 export default function Home() {
   const [tsCodeState, setTSCodeState] = createSignal(
-    "console.log('Hello World');",
+    `console.log('Hello World');\nimport dayjs from "dayjs"\nimport {add} from 'math';\nconst x = add(3, 5);\n`,
   );
 
   const [jsCodeState, setJSCodeState] = createSignal("");
@@ -26,7 +27,9 @@ export default function Home() {
     };
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const jsCode = (window as unknown as any).ts.transpile(tsCodeState());
+    const jsCode = (window as unknown as any).ts.transpile(tsCodeState(), {
+      target: "esnext",
+    });
 
     setJSCodeState(jsCode);
 
@@ -42,14 +45,16 @@ export default function Home() {
 
   return (
     <PanelGroup class="flex h-screen bg-gray-50 text-gray-700">
+      <script src="https://unpkg.com/dayjs@latest/dayjs.min.js" />
       <script src="https://unpkg.com/typescript@latest/lib/typescript.js" />
 
       <Panel id="1" class="w-1/2 bg-gray-50">
         <MonacoEditor
           onChange={(value) => setTSCodeState(value)}
-          language="typescript"
+          // language="typescript"
           value={tsCodeState()}
-          onMount={(monaco) => {
+          language="typescript"
+          onMount={(monaco, editor) => {
             monaco.editor.defineTheme("poimandres", {
               base: "vs-dark", // Base theme can be 'vs-dark', 'vs', or 'hc-black'
               inherit: true, // Whether to inherit from the base theme
@@ -75,6 +80,35 @@ export default function Home() {
             });
 
             monaco.editor.setTheme("poimandres");
+
+            // Language Definition extension.
+
+            monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+              ...monaco.languages.typescript.typescriptDefaults.getCompilerOptions(),
+              allowSyntheticDefaultImports: true,
+            });
+
+            monaco.languages.typescript.typescriptDefaults.addExtraLib(
+              DAYJS_index,
+              "file:///node_modules/@types/dayjs/index.d.ts",
+            );
+
+            console.log(DAYJS_index);
+
+            monaco.languages.typescript.typescriptDefaults.addExtraLib(
+              "export declare function add(a: number, b: number): number",
+              "file:///node_modules/@types/math/index.d.ts",
+            );
+
+            const currentModel = editor?.getModel();
+
+            const model = monaco.editor.createModel(
+              currentModel?.getValue() ?? "",
+              currentModel?.getLanguageId(),
+              monaco.Uri.parse("file:///main.ts"),
+            );
+
+            editor?.setModel(model);
           }}
           options={{
             minimap: {
