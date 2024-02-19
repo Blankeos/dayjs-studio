@@ -30,7 +30,7 @@
       {
         "groups": [
           // `react` first, then packages starting with a character
-          ["^solid$", "^[a-z]"],
+          ["^solid-js$", "^[a-z]"],
           // Packages starting with `@`
           ["^@"],
           // Packages starting with `~`
