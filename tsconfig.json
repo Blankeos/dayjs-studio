@@ -12,7 +12,7 @@
     "allowJs": true,
     "noEmit": true,
     "strict": true,
-    "types": ["vinxi/client"],
+    "types": ["vinxi/client", "unplugin-icons/types/solid"],
     "isolatedModules": true,
     "paths": {
       "@/*": ["./src/*"]
