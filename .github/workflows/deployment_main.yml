@@ -38,10 +38,12 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
-      - name: Install Dependencies
-      - uses: oven-sh/setup-bun@v1
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
+
+      - name: Install Dependencies
         run: bun install
 
       - name: Build Solid Static Site Preset
