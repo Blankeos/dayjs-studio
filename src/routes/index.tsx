@@ -3,6 +3,7 @@ import DAYJS_typedefs from "dayjs/index.d.ts?raw";
 import { MonacoEditor } from "solid-monaco";
 import { Panel, PanelGroup, ResizeHandle } from "solid-resizable-panels";
 
+import DAYJS_script from "@/constants/dayjs.min.js?url";
 import { createScriptLoader } from "@solid-primitives/script-loader";
 import { A } from "@solidjs/router";
 
@@ -24,12 +25,13 @@ export default function Home() {
   const [codeLogs, setCodeLogs] = createSignal<string[]>();
 
   createScriptLoader({
-    src: "https://unpkg.com/dayjs@1.11.10/dayjs.min.js",
+    src: DAYJS_script,
     onLoad() {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      console.log((window as any).dayjs, "dayjs lsoaded.");
+      console.log((window as any).dayjs, "dayjs loaded.");
     },
     async: true,
+    defer: true,
   });
 
   createScriptLoader({
@@ -39,6 +41,7 @@ export default function Home() {
       console.log((window as any).ts, "typescript loaded.");
     },
     async: true,
+    defer: true,
   });
 
   function executeCode() {
