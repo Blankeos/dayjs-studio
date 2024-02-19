@@ -16,6 +16,14 @@ bun install
 bun dev
 ```
 
+---
+
+Notes:
+
+- Deploy statically:
+  - https://start.solidjs.com/api/vite
+  - https://www.reddit.com/r/solidjs/comments/17tub83/simple_spa_deployment/
+
 <!-- # SolidStart
 
 Everything you need to build a Solid project, powered by [`solid-start`](https://start.solidjs.com);
