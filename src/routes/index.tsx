@@ -1,10 +1,13 @@
-import { createSignal, For, Show } from "solid-js";
+import { createRenderEffect, createSignal, For, onMount, Show } from "solid-js";
 import DAYJS_typedefs from "dayjs/index.d.ts?raw";
 import { MonacoEditor } from "solid-monaco";
 import { Panel, PanelGroup, ResizeHandle } from "solid-resizable-panels";
 
+import { createScriptLoader } from "@solid-primitives/script-loader";
 import { A } from "@solidjs/router";
 
+import IconVisible from "~icons/fluent/eye-48-regular";
+import IconHidden from "~icons/fluent/eye-hide-20-regular";
 import IconExecute from "~icons/material-symbols-light/play-arrow-outline";
 
 import "solid-resizable-panels/styles.css";
@@ -20,7 +23,27 @@ export default function Home() {
   const [jsCodeState, setJSCodeState] = createSignal("");
   const [codeLogs, setCodeLogs] = createSignal<string[]>();
 
+  createScriptLoader({
+    src: "https://unpkg.com/dayjs@1.11.10/dayjs.min.js",
+    onLoad() {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      console.log((window as any).dayjs, "dayjs lsoaded.");
+    },
+    async: true,
+  });
+
+  createScriptLoader({
+    src: "https://unpkg.com/typescript@5.3.3/lib/typescript.js",
+    onLoad() {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      console.log((window as any).ts, "typescript loaded.");
+    },
+    async: true,
+  });
+
   function executeCode() {
+    if (!window?.ts || !window?.dayjs) return;
+
     const logs: string[] = [];
 
     // Override console logs.
@@ -32,7 +55,7 @@ export default function Home() {
     };
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const jsCode = (window as unknown as any).ts.transpile(tsCodeState(), {
+    const jsCode = window.ts.transpile(tsCodeState(), {
       target: "esnext",
     });
 
@@ -48,10 +71,6 @@ export default function Home() {
 
   return (
     <PanelGroup class="flex h-screen bg-gray-50 text-gray-700">
-      {/* <script src={DAYJS_url} /> */}
-      <script src="https://unpkg.com/dayjs@latest/dayjs.min.js" />
-      <script src="https://unpkg.com/typescript@latest/lib/typescript.js" />
-
       <Panel id="1" class="w-1/2 bg-gray-50">
         <MonacoEditor
           path="awesome"
@@ -155,13 +174,24 @@ export default function Home() {
             💙.
           </p>
         </div>
-        <div class="py-2">
+        <div class="flex gap-x-4 py-2">
           <button
             onClick={executeCode}
-            class="flex items-center gap-x-1.5 rounded-md border border-orange-400 bg-orange-600 px-3 py-2 pr-5 text-white "
+            class="flex h-11 items-center gap-x-1.5 rounded-md border border-orange-400 bg-orange-600 px-3 py-2 pr-5 text-white"
           >
             <IconExecute font-size="22px" />
             <span>Execute</span>
+          </button>
+          <button
+            class={`grid h-11 w-11 place-items-center rounded-md border border-slate-300 bg-slate-200 ${showAdvanced() ? "" : "opacity-70"}`}
+            onClick={() => setShowAdvanced(!showAdvanced())}
+          >
+            <Show
+              when={showAdvanced()}
+              fallback={<IconHidden font-size="18px" />}
+            >
+              <IconVisible font-size="18px" />
+            </Show>
           </button>
         </div>
 
