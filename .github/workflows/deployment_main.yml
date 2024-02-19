@@ -48,9 +48,14 @@ jobs:
 
       - name: Build Solid Static Site Preset
         run: bun run build
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}/
+
+      - name: Log repository name
+        run: echo ${{ github.event.repository.name }}
 
       # .nojekyll so directories starting with an underscore (like _build) will be served and our page will receive its assets.
-      - name: create .nojekyll
+      - name: Create .nojekyll
         run: touch .output/public/.nojekyll
 
       - name: Upload artifact
