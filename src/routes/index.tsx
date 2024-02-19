@@ -33,6 +33,7 @@ export default function Home() {
 
   const [dayjsIsReady, setDayJsIsReady] = createSignal(false);
   const [tsIsReady, setTsIsReady] = createSignal(false);
+  const [hasExecutedOnce, setHasExecutedOnce] = createSignal(false);
 
   createScriptLoader({
     src: DAYJS_SCRIPT_URL,
@@ -57,36 +58,14 @@ export default function Home() {
   });
 
   createEffect(() => {
-    if (dayjsIsReady() && tsIsReady()) {
-      executeCode();
+    if (dayjsIsReady() && tsIsReady() && !hasExecutedOnce()) {
+      setTimeout(() => {
+        executeCode();
+      }, 500);
+
+      setHasExecutedOnce(true);
     }
   });
-
-  // onMount(() => {
-  //   const dayjsScript = document.createElement("script");
-  //   const tsScript = document.createElement("script");
-
-  //   dayjsScript.src = DAYJS_SCRIPT_URL;
-  //   tsScript.src = "https://unpkg.com/typescript@5.3.3/lib/typescript.js";
-
-  //   document.body.appendChild(dayjsScript);
-  //   document.body.appendChild(tsScript);
-
-  //   dayjsScript.onload = () => {
-  //     console.log(window?.dayjs, "dayjs!");
-  //     executeCode();
-  //   };
-
-  //   tsScript.onload = () => {
-  //     console.log(window?.ts, "ts!!");
-  //     executeCode();
-  //   };
-
-  //   return () => {
-  //     document.body.removeChild(dayjsScript);
-  //     document.body.removeChild(tsScript);
-  //   };
-  // });
 
   function executeCode() {
     if (!window?.ts || !window?.dayjs) return;
