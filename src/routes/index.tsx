@@ -1,9 +1,16 @@
-import { createRenderEffect, createSignal, For, onMount, Show } from "solid-js";
+import {
+  createEffect,
+  createRenderEffect,
+  createSignal,
+  For,
+  onMount,
+  Show,
+} from "solid-js";
 import DAYJS_typedefs from "dayjs/index.d.ts?raw";
 import { MonacoEditor } from "solid-monaco";
 import { Panel, PanelGroup, ResizeHandle } from "solid-resizable-panels";
 
-import DAYJS_script from "@/constants/dayjs.min.js?url";
+import DAYJS_SCRIPT_URL from "@/constants/dayjs.min.js?url";
 import { createScriptLoader } from "@solid-primitives/script-loader";
 import { A } from "@solidjs/router";
 
@@ -24,11 +31,15 @@ export default function Home() {
   const [jsCodeState, setJSCodeState] = createSignal("");
   const [codeLogs, setCodeLogs] = createSignal<string[]>();
 
+  const [dayjsIsReady, setDayJsIsReady] = createSignal(false);
+  const [tsIsReady, setTsIsReady] = createSignal(false);
+
   createScriptLoader({
-    src: DAYJS_script,
+    src: DAYJS_SCRIPT_URL,
     onLoad() {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      console.log((window as any).dayjs, "dayjs loaded.");
+      console.log(!!(window as any).dayjs, "dayjs loaded.");
+      setDayJsIsReady(true);
     },
     async: true,
     defer: true,
@@ -38,11 +49,44 @@ export default function Home() {
     src: "https://unpkg.com/typescript@5.3.3/lib/typescript.js",
     onLoad() {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      console.log((window as any).ts, "typescript loaded.");
+      console.log(!!(window as any).ts, "typescript loaded.");
+      setTsIsReady(true);
     },
     async: true,
     defer: true,
   });
+
+  createEffect(() => {
+    if (dayjsIsReady() && tsIsReady()) {
+      executeCode();
+    }
+  });
+
+  // onMount(() => {
+  //   const dayjsScript = document.createElement("script");
+  //   const tsScript = document.createElement("script");
+
+  //   dayjsScript.src = DAYJS_SCRIPT_URL;
+  //   tsScript.src = "https://unpkg.com/typescript@5.3.3/lib/typescript.js";
+
+  //   document.body.appendChild(dayjsScript);
+  //   document.body.appendChild(tsScript);
+
+  //   dayjsScript.onload = () => {
+  //     console.log(window?.dayjs, "dayjs!");
+  //     executeCode();
+  //   };
+
+  //   tsScript.onload = () => {
+  //     console.log(window?.ts, "ts!!");
+  //     executeCode();
+  //   };
+
+  //   return () => {
+  //     document.body.removeChild(dayjsScript);
+  //     document.body.removeChild(tsScript);
+  //   };
+  // });
 
   function executeCode() {
     if (!window?.ts || !window?.dayjs) return;
@@ -136,10 +180,6 @@ export default function Home() {
             setTSCodeState(
               'const fiveDaysAfter = dayjs().add(5, "days");\n\nconsole.log(fiveDaysAfter.format("MMMM D YYYY"))',
             );
-
-            setTimeout(() => {
-              executeCode();
-            }, 500);
           }}
           options={{
             minimap: {
