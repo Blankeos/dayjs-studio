@@ -3,6 +3,7 @@ import DAYJS_typedefs from "dayjs/index.d.ts?raw";
 import { MonacoEditor } from "solid-monaco";
 import { Panel, PanelGroup, ResizeHandle } from "solid-resizable-panels";
 
+import PingingCircle from "@/components/PingingCircle";
 import DAYJS_SCRIPT_URL from "@/constants/dayjs.min.js?url";
 import { createScriptLoader } from "@solid-primitives/script-loader";
 import { A } from "@solidjs/router";
@@ -12,6 +13,7 @@ import IconHidden from "~icons/fluent/eye-hide-20-regular";
 import IconExecute from "~icons/material-symbols-light/play-arrow-outline";
 
 import "solid-resizable-panels/styles.css";
+import "tippy.js/dist/tippy.css";
 
 const DAYJS_index_replaced = DAYJS_typedefs.replace(
   "export = dayjs;",
@@ -33,9 +35,8 @@ export default function Home() {
   createScriptLoader({
     src: DAYJS_SCRIPT_URL,
     onLoad() {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      console.log(!!(window as any).dayjs, "dayjs loaded.");
-      setDayJsIsReady(true);
+      console.log(!!window.dayjs, "dayjs loaded.");
+      if (window.dayjs) setDayJsIsReady(true);
     },
     async: true,
     defer: true,
@@ -44,9 +45,8 @@ export default function Home() {
   createScriptLoader({
     src: "https://unpkg.com/typescript@5.3.3/lib/typescript.js",
     onLoad() {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      console.log(!!(window as any).ts, "typescript loaded.");
-      setTsIsReady(true);
+      console.log(!!window.ts, "typescript loaded.");
+      if (window.ts) setTsIsReady(true);
     },
     async: true,
     defer: true,
@@ -197,14 +197,16 @@ export default function Home() {
           </div>
           <div class="flex gap-x-4 py-2">
             <button
+              disabled={!dayjsIsReady() || !tsIsReady()}
               onClick={executeCode}
-              class="flex h-11 items-center gap-x-1.5 rounded-md border border-orange-400 bg-orange-600 px-3 py-2 pr-5 text-white"
+              class="flex h-11 transform items-center gap-x-1.5 rounded-md border border-orange-400 bg-orange-600 px-3 py-2 pr-5 text-white transition active:scale-95 disabled:cursor-not-allowed disabled:bg-opacity-45 disabled:grayscale"
             >
               <IconExecute font-size="22px" />
               <span>Execute</span>
             </button>
+
             <button
-              class={`grid h-11 w-11 place-items-center rounded-md border border-slate-300 bg-slate-200 ${showAdvanced() ? "" : "opacity-70"}`}
+              class={`grid h-11 w-11 transform place-items-center rounded-md border border-slate-300 bg-slate-200 transition active:scale-95 ${showAdvanced() ? "" : "opacity-70"}`}
               onClick={() => setShowAdvanced(!showAdvanced())}
             >
               <Show
@@ -214,6 +216,27 @@ export default function Home() {
                 <IconVisible font-size="18px" />
               </Show>
             </button>
+
+            <div class="flex items-center gap-x-3">
+              <PingingCircle
+                color={dayjsIsReady() ? "#22c55e" : "#dc2626"}
+                content={
+                  dayjsIsReady()
+                    ? "Day.JS is ready!"
+                    : "Day.JS not ready. Try reloading."
+                }
+              />
+              {/* {JSON.stringify(dayjsIsReady())} */}
+              <PingingCircle
+                color={tsIsReady() ? "#22c55e" : "#dc2626"}
+                content={
+                  tsIsReady()
+                    ? "Typescript is ready!"
+                    : "Typescript not ready. Try reloading."
+                }
+              />
+              {/* {JSON.stringify(tsIsReady())} */}
+            </div>
           </div>
 
           <hr />
