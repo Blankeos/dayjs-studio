@@ -1,17 +1,16 @@
-import { createEffect, createSignal, For, Show } from "solid-js";
 import DAYJS_typedefs from "dayjs/index.d.ts?raw";
+import { createEffect, createSignal, For, onMount, Show } from "solid-js";
 import { MonacoEditor } from "solid-monaco";
 import { Panel, PanelGroup, ResizeHandle } from "solid-resizable-panels";
 
 import PingingCircle from "@/components/PingingCircle";
-import DAYJS_SCRIPT_URL from "@/constants/dayjs.min.js?url";
-import { createScriptLoader } from "@solid-primitives/script-loader";
 import { A } from "@solidjs/router";
 
 import IconVisible from "~icons/fluent/eye-48-regular";
 import IconHidden from "~icons/fluent/eye-hide-20-regular";
 import IconExecute from "~icons/material-symbols-light/play-arrow-outline";
 
+import { debounce } from "@solid-primitives/scheduled";
 import "solid-resizable-panels/styles.css";
 import "tippy.js/dist/tippy.css";
 
@@ -31,36 +30,6 @@ export default function Home() {
   const [hasExecutedOnce, setHasExecutedOnce] = createSignal(false);
 
   let containerRef;
-
-  createScriptLoader({
-    src: DAYJS_SCRIPT_URL,
-    onLoad() {
-      console.log(!!window.dayjs, "dayjs loaded.");
-      if (window.dayjs) setDayJsIsReady(true);
-    },
-    async: true,
-    defer: true,
-  });
-
-  createScriptLoader({
-    src: "https://unpkg.com/typescript@5.3.3/lib/typescript.js",
-    onLoad() {
-      console.log(!!window.ts, "typescript loaded.");
-      if (window.ts) setTsIsReady(true);
-    },
-    async: true,
-    defer: true,
-  });
-
-  createEffect(() => {
-    if (dayjsIsReady() && tsIsReady() && !hasExecutedOnce()) {
-      setTimeout(() => {
-        executeCode();
-      }, 500);
-
-      setHasExecutedOnce(true);
-    }
-  });
 
   function executeCode() {
     if (!window?.ts || !window?.dayjs) return;
@@ -90,13 +59,73 @@ export default function Home() {
     console.log = originalLog;
   }
 
+  const saveEditorState = debounce((value: string) => {
+    localStorage.setItem("dayjs-studio-code", value);
+  }, 1000);
+
+  const loadEditorState = () => {
+    const code = localStorage.getItem("dayjs-studio-code");
+    if (code) {
+      setTSCodeState(code);
+    } else {
+      setTSCodeState(
+        'const fiveDaysAfter = dayjs().add(5, "days");\n\nconsole.log(fiveDaysAfter.format("MMMM D YYYY"))',
+      );
+    }
+  };
+
+  // ===========================================================================
+  // Effects
+  // ===========================================================================
+  onMount(() => {
+    function loadScripts() {
+      // Load typescript
+      const tsScript = document.createElement("script");
+      tsScript.type = "text/javascript";
+      tsScript.onload = () => {
+        console.log(!!window.ts, "typescript loaded.");
+        if (window.ts) setTsIsReady(true);
+      };
+      tsScript.src = "https://unpkg.com/typescript@5.3.3/lib/typescript.js";
+      tsScript.async = true;
+
+      // Load dayjs
+      const dayjsScript = document.createElement("script");
+      dayjsScript.type = "text/javascript";
+      dayjsScript.onload = () => {
+        console.log(!!window.dayjs, "dayjs loaded.");
+        if (window.dayjs) setDayJsIsReady(true);
+      };
+      dayjsScript.src = "https://cdn.jsdelivr.net/npm/dayjs/dayjs.min.js";
+      dayjsScript.async = true;
+
+      document.head.appendChild(tsScript);
+      document.head.appendChild(dayjsScript);
+    }
+
+    loadScripts();
+  });
+
+  createEffect(() => {
+    if (dayjsIsReady() && tsIsReady() && !hasExecutedOnce()) {
+      setTimeout(() => {
+        executeCode();
+      }, 500);
+
+      setHasExecutedOnce(true);
+    }
+  });
+
   return (
     <div class="monaco-editor" ref={containerRef}>
       <PanelGroup class="flex h-screen bg-gray-50 text-gray-700">
         <Panel id="1" class="w-1/2 bg-gray-50">
           <MonacoEditor
             path="awesome"
-            onChange={(value) => setTSCodeState(value)}
+            onChange={(value) => {
+              setTSCodeState(value);
+              saveEditorState(value);
+            }}
             value={tsCodeState()}
             language="typescript"
             onMount={(monaco, editor) => {
@@ -154,9 +183,15 @@ export default function Home() {
 
               editor?.setModel(model);
 
-              setTSCodeState(
-                'const fiveDaysAfter = dayjs().add(5, "days");\n\nconsole.log(fiveDaysAfter.format("MMMM D YYYY"))',
-              );
+              loadEditorState();
+
+              // Add the hotkey for executing the code
+              editor.addAction({
+                id: "executeCode",
+                label: "Execute Code",
+                keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter],
+                run: executeCode,
+              });
             }}
             options={{
               minimap: {

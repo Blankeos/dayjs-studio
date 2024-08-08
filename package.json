@@ -4,38 +4,39 @@
   "scripts": {
     "dev": "vinxi dev",
     "build": "vinxi build",
-    "start": "vinxi start"
+    "start": "vinxi start",
+    "outdated": "bunx npm-check-updates --format group --interactive"
   },
   "dependencies": {
-    "@solid-primitives/scheduled": "^1.4.2",
-    "@solid-primitives/script-loader": "^2.1.1",
-    "@solidjs/router": "^0.12.3",
-    "@solidjs/start": "^0.5.9",
-    "autoprefixer": "^10.4.14",
-    "postcss": "^8.4.26",
-    "solid-js": "^1.8.15",
+    "@solid-primitives/scheduled": "^1.4.3",
+    "@solid-primitives/script-loader": "^2.2.0",
+    "@solidjs/router": "^0.14.3",
+    "@solidjs/start": "^1.0.6",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.41",
+    "solid-js": "^1.8.21",
     "solid-monaco": "^0.2.0",
-    "solid-resizable-panels": "^0.4.1",
-    "tailwindcss": "^3.3.3",
+    "solid-resizable-panels": "^0.5.4",
+    "tailwindcss": "^3.4.10",
     "tippy.js": "^6.3.7",
-    "vinxi": "^0.2.1"
+    "vinxi": "^0.4.1"
   },
   "engines": {
     "node": ">=18"
   },
   "devDependencies": {
-    "@iconify-json/fluent": "^1.1.48",
-    "@iconify-json/material-symbols-light": "^1.1.13",
+    "@iconify-json/fluent": "^1.1.62",
+    "@iconify-json/material-symbols-light": "^1.1.28",
     "@types/bun": "latest",
-    "@typescript-eslint/eslint-plugin": "^7.0.1",
-    "@typescript-eslint/parser": "^7.0.1",
-    "dayjs": "^1.11.10",
-    "eslint": "^8.56.0",
-    "eslint-plugin-simple-import-sort": "^12.0.0",
-    "eslint-plugin-solid": "^0.13.1",
-    "prettier": "^3.2.5",
-    "prettier-plugin-tailwindcss": "^0.5.11",
-    "unplugin-icons": "^0.18.5"
+    "@typescript-eslint/eslint-plugin": "^8.2.0",
+    "@typescript-eslint/parser": "^8.2.0",
+    "dayjs": "^1.11.12",
+    "eslint": "^9.9.0",
+    "eslint-plugin-solid": "^0.14.2",
+    "prettier": "^3.3.3",
+    "prettier-plugin-tailwindcss": "^0.6.6",
+    "unplugin-icons": "^0.19.2",
+    "vite-plugin-solid-svg": "^0.8.1"
   },
   "module": "index.ts",
   "peerDependencies": {
