@@ -1,11 +1,4 @@
-import {
-  Component,
-  createEffect,
-  createSignal,
-  FlowComponent,
-  mergeProps,
-  onMount,
-} from "solid-js";
+import { Component, createEffect, createSignal, onMount } from "solid-js";
 import Tippy, {
   type Instance,
   type Props as TippyInstanceProps,

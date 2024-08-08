@@ -4,7 +4,7 @@ import { Suspense } from "solid-js";
 import { Router } from "@solidjs/router";
 import { FileRoutes } from "@solidjs/start/router";
 
-import RootLayout from "./components/RootLayout";
+import RootLayout from "./components/root-layout";
 
 import "./app.css";
 

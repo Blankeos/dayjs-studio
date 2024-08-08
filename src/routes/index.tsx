@@ -3,7 +3,7 @@ import { createEffect, createSignal, For, onMount, Show } from "solid-js";
 import { MonacoEditor } from "solid-monaco";
 import { Panel, PanelGroup, ResizeHandle } from "solid-resizable-panels";
 
-import PingingCircle from "@/components/PingingCircle";
+import PingingCircle from "@/components/pinging-circle";
 import { A } from "@solidjs/router";
 
 import IconVisible from "~icons/fluent/eye-48-regular";
