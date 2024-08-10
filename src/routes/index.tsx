@@ -10,6 +10,7 @@ import IconVisible from "~icons/fluent/eye-48-regular";
 import IconHidden from "~icons/fluent/eye-hide-20-regular";
 import IconExecute from "~icons/material-symbols-light/play-arrow-outline";
 
+import Tippy from "@/components/tippy";
 import { debounce } from "@solid-primitives/scheduled";
 import "solid-resizable-panels/styles.css";
 import "tippy.js/dist/tippy.css";
@@ -231,26 +232,31 @@ export default function Home() {
             </p>
           </div>
           <div class="flex gap-x-4 py-2">
-            <button
-              disabled={!dayjsIsReady() || !tsIsReady()}
-              onClick={executeCode}
-              class="flex h-11 transform items-center gap-x-1.5 rounded-md border border-orange-400 bg-orange-600 px-3 py-2 pr-5 text-white transition active:scale-95 disabled:cursor-not-allowed disabled:bg-opacity-45 disabled:grayscale"
-            >
-              <IconExecute font-size="22px" />
-              <span>Execute</span>
-            </button>
-
-            <button
-              class={`grid h-11 w-11 transform place-items-center rounded-md border border-slate-300 bg-slate-200 transition active:scale-95 ${showAdvanced() ? "" : "opacity-70"}`}
-              onClick={() => setShowAdvanced(!showAdvanced())}
-            >
-              <Show
-                when={showAdvanced()}
-                fallback={<IconHidden font-size="18px" />}
+            {/* TODO: Make this flexible. */}
+            <Tippy content={"Cmd + Enter"}>
+              <button
+                disabled={!dayjsIsReady() || !tsIsReady()}
+                onClick={executeCode}
+                class="flex h-11 transform items-center gap-x-1.5 rounded-md border border-orange-400 bg-orange-600 px-3 py-2 pr-5 text-white transition active:scale-95 disabled:cursor-not-allowed disabled:bg-opacity-45 disabled:grayscale"
               >
-                <IconVisible font-size="18px" />
-              </Show>
-            </button>
+                <IconExecute font-size="22px" />
+                <span>Execute</span>
+              </button>
+            </Tippy>
+
+            <Tippy content="Show advanced output">
+              <button
+                class={`grid h-11 w-11 transform place-items-center rounded-md border border-slate-300 bg-slate-200 transition active:scale-95 ${showAdvanced() ? "" : "opacity-70"}`}
+                onClick={() => setShowAdvanced(!showAdvanced())}
+              >
+                <Show
+                  when={showAdvanced()}
+                  fallback={<IconHidden font-size="18px" />}
+                >
+                  <IconVisible font-size="18px" />
+                </Show>
+              </button>
+            </Tippy>
 
             <div class="flex items-center gap-x-3">
               <PingingCircle
