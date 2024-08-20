@@ -12,6 +12,7 @@ import IconExecute from "~icons/material-symbols-light/play-arrow-outline";
 
 import Tippy from "@/components/tippy";
 import { debounce } from "@solid-primitives/scheduled";
+import { Meta, Title } from "@solidjs/meta";
 import "solid-resizable-panels/styles.css";
 import "tippy.js/dist/tippy.css";
 
@@ -62,7 +63,7 @@ export default function Home() {
 
   const saveEditorState = debounce((value: string) => {
     localStorage.setItem("dayjs-studio-code", value);
-  }, 1000);
+  }, 500);
 
   const loadEditorState = () => {
     const code = localStorage.getItem("dayjs-studio-code");
@@ -119,6 +120,14 @@ export default function Home() {
 
   return (
     <div class="monaco-editor" ref={containerRef}>
+      <Title>
+        DayJS Studio - A DayJS TypeScript environment on the browser
+      </Title>
+      <Meta
+        name="description"
+        content="A DayJS TypeScript environment on the browser"
+      />
+
       <PanelGroup class="flex h-screen bg-gray-50 text-gray-700">
         <Panel id="1" class="w-1/2 bg-gray-50">
           <MonacoEditor

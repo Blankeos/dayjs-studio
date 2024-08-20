@@ -6,6 +6,7 @@ import { FileRoutes } from "@solidjs/start/router";
 
 import RootLayout from "./components/root-layout";
 
+import { MetaProvider } from "@solidjs/meta";
 import "./app.css";
 
 export default function App() {
@@ -14,9 +15,11 @@ export default function App() {
       base={import.meta.env.SERVER_BASE_URL}
       root={(props) => (
         <>
-          <RootLayout>
-            <Suspense>{props.children}</Suspense>
-          </RootLayout>
+          <MetaProvider>
+            <RootLayout>
+              <Suspense>{props.children}</Suspense>
+            </RootLayout>
+          </MetaProvider>
         </>
       )}
     >
